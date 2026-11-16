@@ -1500,8 +1500,8 @@ button{font:inherit}
 .recipe-flow-node button{font:inherit}
 
 
-.detail-art.recipe-project-art{display:block!important;height:510px!important;min-height:510px!important;padding:0!important;overflow:auto!important;background:#fff!important}
-.recipe-prototype{min-width:700px;min-height:100%;background:#fff;color:#242424;font:13px/1.5 Arial,'Noto Sans KR',sans-serif}
+.detail-art.recipe-project-art{display:block!important;height:510px!important;min-height:510px!important;padding:0!important;overflow-x:auto!important;overflow-y:auto!important;overscroll-behavior:contain; -webkit-overflow-scrolling:touch;background:#fff!important}
+.recipe-prototype{min-width:700px;min-height:100%;height:max-content;background:#fff;color:#242424;font:13px/1.5 Arial,'Noto Sans KR',sans-serif}
 .rp-header{height:50px;border-bottom:1px solid #eee;display:flex;align-items:center;padding:0 24px;gap:20px;position:sticky;top:0;background:#fff;z-index:4}
 .rp-header>b{font-size:18px;color:#4a9d52;white-space:nowrap}.rp-header b span{color:#13b832}
 .rp-header input{flex:1;border:0;background:#f6f7f8;border-radius:7px;padding:10px}.rp-header button{border:0;background:none;cursor:pointer;color:#555}
@@ -2060,6 +2060,17 @@ button{font:inherit}
       detailArt.scrollLeft = 0;
     } else if (title === '10000recipe') {
       detailArt.classList.add('recipe-project-art');
+      // Keep vertical wheel scrolling inside the 10000recipe preview only.
+      if (!detailArt.dataset.recipeWheelBound) {
+        detailArt.addEventListener('wheel', (e) => {
+          if (!detailArt.classList.contains('recipe-project-art')) return;
+          if (Math.abs(e.deltaY) >= Math.abs(e.deltaX)) {
+            e.preventDefault();
+            detailArt.scrollTop += e.deltaY;
+          }
+        }, { passive: false });
+        detailArt.dataset.recipeWheelBound = '1';
+      }
       detailArt.innerHTML = `<div id="recipe-prototype" class="recipe-prototype">
         <header class="rp-header"><b>10000recipe<span>✿</span></b><input placeholder="레시피 검색"><button data-go="search">⌕ 검색</button><nav><button data-go="home">홈</button><button data-go="category">레시피</button><button data-go="rank">스크랩</button><button data-go="my">마이</button></nav></header>
         <main id="rp-screen"></main></div>`;
@@ -2421,11 +2432,6 @@ const ABOUT_SKILL_TEXT = {
 "ChatGPT":"디자인 아이디어 및 콘셉트 발상\n레퍼런스·자료 정리\n콘텐츠 문구와 기획 보조\nHTML·CSS·JavaScript 코드 작성 보조",
 "VS Code":"HTML·CSS 웹페이지 코딩\nJavaScript 인터랙션 구현\n레이아웃 및 스타일 수정\n웹 프로젝트 코드 편집",
 "GitHub":"프로젝트 코드 저장 및 버전 관리\n변경 사항 기록·공유\nGitHub Pages 웹사이트 배포\n포트폴리오 링크 관리",
-,"오이무침":{"servings":2,"ingredients":[["오이",2,"개"],["고춧가루",1,"큰술"],["식초",1,"큰술"],["설탕",0.5,"큰술"],["소금",0.3,"작은술"],["다진 마늘",0.5,"작은술"]],"steps":[["오이 손질","오이를 씻어 얇게 썰고 소금을 살짝 뿌려 5분 둡니다.","🔪"],["양념하기","고춧가루·식초·설탕·마늘을 섞어 양념장을 만듭니다.","🥣"],["무치기","오이의 물기를 가볍게 제거한 뒤 양념에 버무립니다.","🥒"]]}
-,"진미채볶음":{"servings":2,"ingredients":[["진미채",150,"g"],["고추장",1,"큰술"],["간장",1,"큰술"],["올리고당",1,"큰술"],["마요네즈",1,"큰술"],["참기름",0.5,"큰술"]],"steps":[["진미채 준비","진미채를 먹기 좋은 길이로 자르고 마요네즈에 버무립니다.","🔪"],["양념 끓이기","팬에 고추장·간장·올리고당을 넣고 약불에서 끓입니다.","🍳"],["볶기","불을 끄고 진미채를 넣어 골고루 버무린 뒤 참기름을 더합니다.","🥢"]]}
-,"멸치볶음":{"servings":2,"ingredients":[["잔멸치",100,"g"],["견과류",30,"g"],["간장",1,"큰술"],["올리고당",1,"큰술"],["식용유",1,"큰술"],["참기름",0.5,"큰술"]],"steps":[["멸치 볶기","마른 팬에 멸치를 2~3분 볶아 비린내를 날립니다.","🍳"],["양념하기","팬에 식용유·간장·올리고당을 넣고 끓입니다.","🥣"],["마무리","멸치와 견과류를 넣어 볶고 참기름을 둘러 완성합니다.","🥢"]]}
-,"감자조림":{"servings":2,"ingredients":[["감자",2,"개"],["간장",2,"큰술"],["물",150,"ml"],["올리고당",1,"큰술"],["다진 마늘",0.5,"큰술"]],"steps":[["감자 손질","감자를 깍둑썰기하고 물에 헹궈 전분을 제거합니다.","🔪"],["조리기","팬에 감자·물·간장·마늘을 넣고 중불에서 익힙니다.","🍳"],["윤기 내기","감자가 익으면 올리고당을 넣고 국물이 자작해질 때까지 조립니다.","🥔"]]}
-,"계란장조림":{"servings":2,"ingredients":[["달걀",4,"개"],["간장",4,"큰술"],["물",200,"ml"],["설탕",1,"큰술"],["마늘",4,"쪽"]],"steps":[["달걀 삶기","달걀을 10분 정도 삶아 껍질을 벗깁니다.","🥚"],["양념 끓이기","냄비에 간장·물·설탕·마늘을 넣고 끓입니다.","🍳"],["조리기","달걀을 넣고 약불에서 10분 정도 조려 색과 맛을 입힙니다.","🥘"]]}}
 
 };
 function showAboutSkill(name){
